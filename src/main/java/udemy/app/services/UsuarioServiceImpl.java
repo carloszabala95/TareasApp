@@ -2,6 +2,7 @@ package udemy.app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import udemy.app.persistence.entities.Tarea;
 import udemy.app.persistence.entities.Usuario;
 import udemy.app.persistence.repositories.TareaRepository;
 import udemy.app.persistence.repositories.UsuarioRepository;
@@ -14,7 +15,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private TareaService tareaService;
+    private TareaRepository tareaRepository;
+
 
     @Override
     public List<Usuario> getUsuarios() {
@@ -41,8 +43,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario deleteUsuario(String username) {
         Usuario user = usuarioRepository.findByUsername(username);
-        tareaService.deleteByUsuarioId(user.getId());
-        usuarioRepository.delete(user);
+        if(user != null) {
+            List<Tarea> tareas = tareaRepository.findAllByUsuario_id(user.getId());
+            tareaRepository.deleteAll(tareas);
+            usuarioRepository.delete(user);
+        }
         return user;
     }
 
