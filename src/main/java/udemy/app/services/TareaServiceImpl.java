@@ -2,6 +2,7 @@ package udemy.app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import udemy.app.dto.InfoTareaResponse;
 import udemy.app.persistence.entities.Tarea;
 import udemy.app.persistence.entities.Tipo;
 import udemy.app.persistence.entities.Usuario;
@@ -83,5 +84,30 @@ public class TareaServiceImpl implements TareaService {
         } else {
             return null; // Si no existe, devolvemos null
         }
+    }
+
+    @Override
+    public List<Tarea> getTareas(String username, LocalDate fecha) {
+        Usuario user = usuarioRepository.findByUsername(username);
+        if (user != null) {
+            return tareaRepository.findAllByFechaAndUsuario_id(fecha, user.getId());
+        } else {
+            return null; // Si el usuario no existe, devolvemos null
+        }
+    }
+
+    @Override
+    public List<Tarea> getTareas(String username, boolean realizadas) {
+        Usuario user = usuarioRepository.findByUsername(username);
+        if (user != null) {
+            return tareaRepository.findAllByRealizadaAndUsuario_id(realizadas, user.getId());
+        } else {
+            return null; // Si el usuario no existe, devolvemos null
+        }
+    }
+
+    @Override
+    public List<InfoTareaResponse> getInfoTareas() {
+        return tareaRepository.getInfoTarea();
     }
 }
